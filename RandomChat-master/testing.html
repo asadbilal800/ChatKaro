@@ -1,0 +1,121 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+  
+  </head>
+  <body background="bc.jpeg">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+      
+      <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css?family=Alfa+Slab+One" rel="stylesheet">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style='font-family: Roboto Slab' style='color: white'>
+          <a class="navbar-brand" href="localhost:3000">
+              <img src="logo.png" alt="Smiley face" height="42" width="42">
+  
+          </a>
+          <a class="navbar-brand" style='text-align: center; font-size: 30px; font-family: Alfa Slab One; color:white'>Chat Karo</a>
+
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="#" >ChatRoom <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">About Us</a>
+              </li>
+             
+              
+            </ul>
+            
+          </div>
+
+        </nav>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src = "/socket.io/socket.io.js"></script>
+        <script>
+        $(document).ready(function(){
+    
+      var socket = io();
+      var room = "";
+    
+    socket.on('connect', function() {
+      socket.on('roomtime', function(data) { 
+      room= data;
+      
+     
+    });});
+    
+    
+    
+    socket.on('disconnect', function() {
+      console.log('disconnected jani')
+    });
+    
+    
+    socket.on('message', function(data) { 
+      if(data =='Connecting') {
+        $('#asad3').attr('disabled',true);
+        
+    
+        $('#list').append("<li class='list-group-item'>"+"<div class='spinner-border' role='status'></div>   "+data+" To User"+"</li>"); }
+        else if(data=='CONNECTED') {
+          $('#list').empty();
+          $('#asad3').attr('disabled',false);
+         
+          $('#list').append("<li class='list-group-item' >"+"--------------"+data+"---------------"+"</li>"); }
+        else {
+         $('#list').append("<li class='list-group-item' >"+"User: "+data+"</li>"); }
+        });
+    
+    
+    
+    socket.on('left', function(data) { 
+      $('#list').append("<li class='list-group-item'>"+"* User has left the chat * Press Find New."+"</li>");
+      socket.emit('undefined_state','x');
+      
+      
+    });
+    
+    
+    $('#asad3').click(function(){
+        $('#asad3').attr('disabled',true);
+      
+        socket.emit('findNew',room);
+    })
+    $('#asad4').click(function(){
+        $('#list').empty();
+    })
+    $('#asad').click(function(){
+    
+    var x = $('#asad2').val();
+    $('#list').append("<li class='list-group-item' >"+"You: "+x+"</li>");
+    
+    socket.emit('message',x,room);
+    $('#asad2').val('');
+    })
+    
+    });
+          
+        </script>  
+    <div  style='left: 0; padding-bottom: 5px;
+    bottom: 0;
+    position: absolute;'>
+       
+        <input  class="btn btn-primary" type="button" value="send"  id="asad"   style='font-family: Roboto Slab'>
+        <input type="text" value="" id="asad2" style='border-radius: 5px;' size="50em">
+        <button type="button" class="btn btn-danger" id="asad3"  >Find New</button>
+   
+    </div>
+    
+    <ul class='list-group' id='list' style='padding:15px'></ul>
+   
+
+
+
+
+  </body>
+</html>

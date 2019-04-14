@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chat</title>
+</head>
+
+<body>
+  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src = "/socket.io/socket.io.js"></script>
+    <script>
+    $(document).ready(function(){
+
+  var socket = io();
+  var room = "";
+
+socket.on('connect', function() {
+  socket.on('roomtime', function(data) { 
+  room= data;
+  $('#asad').attr('disabled',false);
+ 
+});});
+
+
+
+socket.on('disconnect', function() {
+  console.log('disconnected jani')
+});
+
+
+socket.on('message', function(data) { 
+  if(data =='CONNECTING') {
+    $('#asad3').attr('disabled',true);
+    $('#asad').attr('disabled',true);
+
+    $('#list').append("<li>"+"--------------"+data+"---------------"+"</li>"); }
+    else if(data=='CONNECTED') {
+      $('#asad3').attr('disabled',false);
+
+      $('#list').append("<li>"+"--------------"+data+"---------------"+"</li>"); }
+    else {
+     $('#list').append("<li>"+"User: "+data+"</li>"); }
+    });
+
+
+
+socket.on('left', function(data) { 
+  $('#list').append("<li>"+"* User has left the chat * Press Find New."+"</li>");
+  socket.emit('undefined_state','x');
+  $('#asad').attr('disabled',true);
+ 
+  $('#asad2').attr('disabled',true);
+  
+});
+
+
+$('#asad3').click(function(){
+    $('#asad3').attr('disabled',true);
+    $('#asad').attr('disabled',true);
+    socket.emit('findNew',room);
+})
+$('#asad4').click(function(){
+    $('#list').empty();
+})
+$('#asad').click(function(){
+
+var x = $('#asad2').val();
+$('#list').append("<li>"+"You: "+x+"</li>");
+
+socket.emit('message',x,room);
+$('#asad2').val('');
+})
+
+});
+      
+    </script>  
+
+
+
+<h1 > chat </h1> 
+<h2 id ='mode'> </h2> 
+<input type="button" value="Clear" id="asad4">
+
+<input type="button" value="send"  id="asad"  disabled=true>
+<input type="text" value="" id="asad2">
+<input type="button" value="Find new" id="asad3" disabled=true>
+
+<ul id='list'></ul>
+
+</body>
+</html>
